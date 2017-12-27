@@ -1,8 +1,8 @@
 {
-  "name": "express-mongoose-es6-rest-api",
-  "version": "2.0.0",
-  "description": "A Boilerplate application for building REST APIs using express, mongoose in ES6 with code coverage",
-  "author": "Kunal Kapadia <kunalkapadia12@gmail.com>",
+  "name": "cosmo-aggregation-server",
+  "version": "1.0.0",
+  "description": "Cosmo aggregation server",
+  "author": "Jason Werner <jason@cosmoapp.io>",
   "main": "index.js",
   "private": false,
   "engines": {
@@ -23,23 +23,6 @@
     "test:check-coverage": "yarn test:coverage && istanbul check-coverage",
     "report-coverage": "coveralls < ./coverage/lcov.info"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:KunalKapadia/express-mongoose-es6-rest-api.git"
-  },
-  "keywords": [
-    "express",
-    "node",
-    "node.js",
-    "mongodb",
-    "mongoose",
-    "es6",
-    "mocha",
-    "istanbul",
-    "REST",
-    "API",
-    "boilerplate"
-  ],
   "dependencies": {
     "bluebird": "3.4.6",
     "body-parser": "1.15.2",
@@ -48,6 +31,7 @@
     "cors": "2.8.1",
     "debug": "^2.4.5",
     "dotenv": "^4.0.0",
+    "expo-server-sdk": "false2.3.3",
     "express": "4.14.0",
     "express-jwt": "5.1.0",
     "express-validation": "1.0.1",
@@ -56,9 +40,13 @@
     "http-status": "^0.2.0",
     "joi": "10.0.6",
     "jsonwebtoken": "7.1.9",
+    "lodash": "false4.17.4",
     "method-override": "^2.3.5",
     "mongoose": "4.7.4",
     "morgan": "1.7.0",
+    "socket.io": "false2.0.4",
+    "socket.io-client": "false2.0.4",
+    "uuid": "false3.1.0",
     "winston": "2.3.0"
   },
   "devDependencies": {
@@ -92,7 +80,6 @@
     "supertest-as-promised": "4.0.2",
     "validate-commit-msg": "^2.6.1"
   },
-  "license": "MIT",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
