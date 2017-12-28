@@ -1,11 +1,19 @@
 import io from 'socket.io-client';
 import cryptocompareLib from '../lib/cryptocompare';
 
-const socket = io.connect('wss://streamer.cryptocompare.com');
+class CryptoCompare {
+  constructor() {
+    this.socket = io.connect('wss://streamer.cryptocompare.com');
+    this.socket.on('m', cryptocompareLib.handleMessage);
+  }
 
-socket.on('m', cryptocompareLib.handleMessage);
+  addSubs(subs) {
+    this.socket.emit('SubAdd', { subs: subs.map(cryptocompareLib.getSubString) });
+  }
 
-const addSubs = subs => socket.emit('SubAdd', { subs: subs.map(cryptocompareLib.getSubString) });
-const removeSubs = subs => socket.emit('SubRemove', { subs: subs.map(cryptocompareLib.getSubString) });
+  removeSubs(subs) {
+    this.socket.emit('SubRemove', { subs: subs.map(cryptocompareLib.getSubString) });
+  }
+}
 
-export default { addSubs, removeSubs };
+export default new CryptoCompare();

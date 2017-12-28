@@ -1,9 +1,9 @@
 import Pair from '../models/pair.model';
-import cryptocompare from './cryptocompare';
+import CryptoCompare from './CryptoCompare';
 
 const initCryptoCompare = () => {
   Pair.find({}, (err, pairs) => {
-    cryptocompare.addSubs(pairs.map(({ pair }) => pair));
+    CryptoCompare.addSubs(pairs.map(({ pair }) => pair));
   });
 };
 
