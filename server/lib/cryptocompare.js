@@ -1,5 +1,5 @@
 import CCC from '../util/CryptoCompareConvert';
-import pushLib from '../lib/push';
+import pushLib from './push';
 
 const prices = {};
 
@@ -11,7 +11,7 @@ const getSubString = (pair) => {
 function handleMessage(message) {
   const messageType = message.substring(0, message.indexOf('~'));
   let res = {};
-  if (messageType == CCC.STATIC.TYPE.CURRENTAGG) {
+  if (messageType === CCC.STATIC.TYPE.CURRENTAGG) {
     res = CCC.CURRENT.unpack(message);
     const {
       FROMSYMBOL: base,

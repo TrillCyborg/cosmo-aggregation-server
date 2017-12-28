@@ -4,10 +4,7 @@ import util from 'util';
 // config should be imported before importing any other file
 import config from './config/config';
 import app from './config/express';
-
-import cryptocompare from './server/socket/cryptocompare';
-import Pair from './server/models/pair.model';
-import socket from './server/socket';
+import sockets from './server/sockets';
 
 const debug = require('debug')('express-mongoose-es6-rest-api:index');
 
@@ -21,14 +18,7 @@ mongoose.Promise = Promise;
 const mongoUri = config.mongo.host;
 mongoose.connect(mongoUri, { server: { socketOptions: { keepAlive: 1 } } }, () => {
   console.log('Connected to DB');
-  const subscriptions = [];
-  Pair.find({}, (err, pairs) => {
-    pairs.forEach(({ pair }) => {
-      const ccSubFormat = cryptocompare.getSubString(pair);
-      subscriptions.push(ccSubFormat);
-    });
-    socket.addSubs(subscriptions);
-  });
+  sockets.initSockets();
 });
 mongoose.connection.on('error', () => {
   throw new Error(`unable to connect to database: ${mongoUri}`);

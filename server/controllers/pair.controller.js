@@ -1,6 +1,5 @@
 import Pair from '../models/pair.model';
-import cryptocompare from '../socket/cryptocompare';
-import socket from '../socket';
+import cryptocompare from '../sockets/cryptocompare';
 
 function validatePair(pair) {
   if (pair && pair.indexOf('-') !== -1) {
@@ -27,7 +26,7 @@ function add(req, res) {
             console.log('ERROR', err);
             return res.status(500).send(`ERROR: ${err}`);
           }
-          socket.addSubs([cryptocompare.getSubString(pair)]);
+          cryptocompare.addSubs([pair]);
           return res.json({ success: true, type: 'ADD', pair });
         });
       }
@@ -45,7 +44,7 @@ function remove(req, res) {
         console.log('ERROR', err);
         return res.status(500).send(`ERROR: ${err}`);
       }
-      socket.removeSubs([cryptocompare.getSubString(pair)]);
+      cryptocompare.removeSubs([pair]);
       return res.json({ success: true, type: 'REMOVE', pair });
     });
   }
