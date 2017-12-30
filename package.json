@@ -24,6 +24,8 @@
     "report-coverage": "coveralls < ./coverage/lcov.info"
   },
   "dependencies": {
+    "aws-sdk": "false2.176.0",
+    "axios": "false0.17.1",
     "bluebird": "3.4.6",
     "body-parser": "1.15.2",
     "compression": "1.6.2",
@@ -36,6 +38,7 @@
     "express-jwt": "5.1.0",
     "express-validation": "1.0.1",
     "express-winston": "2.1.2",
+    "fs": "false0.0.1-security",
     "helmet": "3.1.0",
     "http-status": "^0.2.0",
     "joi": "10.0.6",
