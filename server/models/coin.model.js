@@ -15,7 +15,7 @@ const CCImageSchema = new Schema({
   _id: { type: String, default: uuid.v4 },
   url: String,
   width: Number,
-  hight: Number,
+  height: Number,
 });
 
 const CoinSchema = new Schema({
@@ -30,6 +30,7 @@ const CoinSchema = new Schema({
   proofType: String,
   totalSupply: Number,
   startDate: String,
+  subsPairs: [String],
   links: LinksSchema,
   ccImage: CCImageSchema,
 });

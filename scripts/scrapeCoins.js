@@ -42,8 +42,11 @@ async function getCryptoCompareCoinData(coin) {
     proofType: coin.ProofType,
     totalSupply: coin.TotalCoinSupply === 'N/A'
       ? null
-      : coin.TotalCoinSupply.replace(/\D/, ''),
-    // subs: coinSnapshot.Subs,
+      : coin.TotalCoinSupply.replace(/\D/, '').split(',').join(''),
+    subsPairs: coinSnapshot.StreamerDataRaw.map((sub) => {
+      const split = sub.split('~');
+      return `${split[2]}-${split[3]}`;
+    }),
     links: {},
   };
 
@@ -131,12 +134,12 @@ async function scrapeCoins() {
   const coinsList = await getCryptoCompareCoinsList();
   const coins = Object.keys(coinsList);
   const coinsToGet = await getScrapedCoins(coins);
-  console.log(coinsToGet)
+  console.log(coinsToGet.sort())
   const coinData = {};
   let error = false;
   await Promise.all(coinsToGet.sort().map(async (c, i) => {
     try {
-      await timeout(1200 * i);
+      await timeout(1500 * i);
       if (error) {
         return;
       }
@@ -149,6 +152,7 @@ async function scrapeCoins() {
     } catch (e) {
       console.log('ERROR: ', e);
       error = true;
+      process.exit();
     }
   }));
   console.log(JSON.stringify(Object.keys(coinData), null, 4));
