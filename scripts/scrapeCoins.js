@@ -1,4 +1,4 @@
-// RUN WITH babel-node --presets es2015
+// RUN WITH: babel-node --presets es2015
 require('dotenv').config();
 import mongoose from 'mongoose';
 import axios from 'axios';
