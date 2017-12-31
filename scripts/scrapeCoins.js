@@ -42,7 +42,7 @@ async function getCryptoCompareCoinData(coin) {
     proofType: coin.ProofType,
     totalSupply: coin.TotalCoinSupply === 'N/A'
       ? null
-      : coin.TotalCoinSupply.replace(/\D/, '').split(',').join(''),
+      : coin.TotalCoinSupply.replace(/\D/, '').split(',').join('').split(' ').join(''),
     subsPairs: coinSnapshot.StreamerDataRaw.map((sub) => {
       const split = sub.split('~');
       return `${split[2]}-${split[3]}`;
@@ -137,7 +137,7 @@ async function scrapeCoins() {
   console.log(coinsToGet.sort())
   const coinData = {};
   let error = false;
-  await Promise.all(coinsToGet.sort().map(async (c, i) => {
+  await Promise.all(coinsToGet.map(async (c, i) => {
     try {
       await timeout(1500 * i);
       if (error) {
