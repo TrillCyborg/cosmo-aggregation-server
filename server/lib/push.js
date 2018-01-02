@@ -5,6 +5,8 @@ import Users from '../models/user.model';
 
 const expo = new Expo();
 
+const prices = {};
+
 function sendPriceAlerts(alerts) {
   const userIds = alerts.map(({ userId }) => userId);
   Users.find({ _id: { $in: userIds } }, (err, users) => {
@@ -60,7 +62,24 @@ function processAlerts(pair, pricesToCheck) {
   });
 }
 
+function handlePriceupdate({ price, base, quote }) {
+  if (prices[`${base}-${quote}`]) {
+    const pricesToCheck = {};
+    // console.log(`${base}-${quote}`, price, prices[`${base}-${quote}`]);
+    if (price > prices[`${base}-${quote}`]) {
+      pricesToCheck.gt = prices[`${base}-${quote}`];
+      pricesToCheck.lt = price;
+    } else {
+      pricesToCheck.gt = price;
+      pricesToCheck.lt = prices[`${base}-${quote}`];
+    }
+    processAlerts(`${base}-${quote}`, pricesToCheck);
+  }
+  prices[`${base}-${quote}`] = price;
+}
+
 export default {
   sendPriceAlerts,
   processAlerts,
+  handlePriceupdate,
 };

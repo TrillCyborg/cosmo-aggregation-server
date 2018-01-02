@@ -1,7 +1,6 @@
 import CCC from '../util/CryptoCompareConvert';
 import pushLib from './push';
-
-const prices = {};
+import candleLib from './candle';
 
 const getSubString = (pair) => {
   const currencies = pair.split('-');
@@ -17,21 +16,14 @@ function handleMessage(message) {
       FROMSYMBOL: base,
       TOSYMBOL: quote,
       PRICE: price,
+      LASTVOLUME: volumeFrom,
+      LASTVOLUMETO: volumeTo,
+      // MARKET: exchange,
     } = res;
+    // console.log(`${base}-${quote} ${price} ${volumeTo}`);
+    candleLib.updateCandles({ base, quote, price, volumeFrom, volumeTo, source: 'CCCAGG' });
     if (price) {
-      if (prices[`${base}-${quote}`]) {
-        const pricesToCheck = {};
-        console.log(`${base}-${quote}`, price, prices[`${base}-${quote}`]);
-        if (price > prices[`${base}-${quote}`]) {
-          pricesToCheck.gt = prices[`${base}-${quote}`];
-          pricesToCheck.lt = price;
-        } else {
-          pricesToCheck.gt = price;
-          pricesToCheck.lt = prices[`${base}-${quote}`];
-        }
-        pushLib.processAlerts(`${base}-${quote}`, pricesToCheck);
-      }
-      prices[`${base}-${quote}`] = price;
+      pushLib.handlePriceupdate({ price, base, quote });
     }
   }
 }

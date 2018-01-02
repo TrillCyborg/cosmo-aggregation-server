@@ -43,7 +43,7 @@ async function getCryptoCompareCoinData(coin) {
     totalSupply: coin.TotalCoinSupply === 'N/A'
       ? null
       : coin.TotalCoinSupply.replace(/\D/, '').split(',').join('').split(' ').join(''),
-    subsPairs: coinSnapshot.StreamerDataRaw.map((sub) => {
+    possibleSubs: coinSnapshot.StreamerDataRaw.map((sub) => {
       const split = sub.split('~');
       return `${split[2]}-${split[3]}`;
     }),

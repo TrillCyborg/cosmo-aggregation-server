@@ -30,7 +30,9 @@ const CoinSchema = new Schema({
   proofType: String,
   totalSupply: Number,
   startDate: String,
-  subsPairs: [String],
+  subs: [String],
+  possibleSubs: [String],
+  exchanges: [String],
   links: LinksSchema,
   ccImage: CCImageSchema,
 });
