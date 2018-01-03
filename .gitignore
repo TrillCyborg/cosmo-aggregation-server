@@ -51,4 +51,4 @@ node_modules
 .env
 
 # scripts
-scripts/coinsScraped.txt
+scripts/records
