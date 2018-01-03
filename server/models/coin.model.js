@@ -18,6 +18,12 @@ const CCImageSchema = new Schema({
   height: Number,
 });
 
+const MarketsSchema = new Schema({
+  _id: { type: String, default: uuid.v4 },
+  CCCAGG: [String],
+  BITTREX: [String],
+});
+
 const CoinSchema = new Schema({
   _id: { type: String, default: uuid.v4 },
   ccId: String,
@@ -31,8 +37,9 @@ const CoinSchema = new Schema({
   totalSupply: Number,
   startDate: String,
   subs: [String],
-  possibleSubs: [String],
+  possibleCCSubs: [String],
   exchanges: [String],
+  markets: MarketsSchema,
   links: LinksSchema,
   ccImage: CCImageSchema,
 });

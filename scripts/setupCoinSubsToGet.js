@@ -15,7 +15,7 @@ const SUPPORTED_QUOTE_CURRENCIES = ['BTC', 'ETH', 'LTC', 'USD', 'EUR', 'AUD', 'C
 const timeout = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const recordCoin = async (coin) =>
-  new Promise((resolve, reject) => fs.appendFile(__dirname + '/coinSubsToGetScraped.txt', `${coin}\n`, (err) => {
+  new Promise((resolve, reject) => fs.appendFile(__dirname + '/records/coinSubsToGetScraped.txt', `${coin}\n`, (err) => {
     if (err) {
       return reject(err);
     }
@@ -23,7 +23,7 @@ const recordCoin = async (coin) =>
   }));
 
 const getScrapedCoins = async (coins) =>
-  new Promise((resolve, reject) => fs.readFile(__dirname + '/coinSubsToGetScraped.txt', (err, data) => {
+  new Promise((resolve, reject) => fs.readFile(__dirname + '/records/coinSubsToGetScraped.txt', (err, data) => {
     if (err) {
       return reject(err);
     }

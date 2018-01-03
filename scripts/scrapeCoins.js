@@ -43,7 +43,7 @@ async function getCryptoCompareCoinData(coin) {
     totalSupply: coin.TotalCoinSupply === 'N/A'
       ? null
       : coin.TotalCoinSupply.replace(/\D/, '').split(',').join('').split(' ').join(''),
-    possibleSubs: coinSnapshot.StreamerDataRaw.map((sub) => {
+    possibleCCSubs: coinSnapshot.StreamerDataRaw.map((sub) => {
       const split = sub.split('~');
       return `${split[2]}-${split[3]}`;
     }),
@@ -114,7 +114,7 @@ const saveCoinToMongo = async (coin) =>
     }));
 
 const recordCoin = async (coin) =>
-  new Promise((resolve, reject) => fs.appendFile(__dirname + '/coinsScraped.txt', `${coin}\n`, (err) => {
+  new Promise((resolve, reject) => fs.appendFile(__dirname + '/records/coinsScraped.txt', `${coin}\n`, (err) => {
     if (err) {
       return reject(err);
     }
@@ -122,7 +122,7 @@ const recordCoin = async (coin) =>
   }));
 
 const getScrapedCoins = async (coins) =>
-  new Promise((resolve, reject) => fs.readFile(__dirname + '/coinsScraped.txt', (err, data) => {
+  new Promise((resolve, reject) => fs.readFile(__dirname + '/records/coinsScraped.txt', (err, data) => {
     if (err) {
       return reject(err);
     }

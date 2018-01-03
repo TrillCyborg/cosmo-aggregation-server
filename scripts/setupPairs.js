@@ -17,7 +17,7 @@ const SUPPORTED_FIAT_QUOTES = ['USD', 'EUR', 'AUD', 'CAD', 'CNY', 'GBP', 'ILS', 
 const timeout = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const recordCoin = async (coin) =>
-  new Promise((resolve, reject) => fs.appendFile(__dirname + '/pairsSetup.txt', `${coin}\n`, (err) => {
+  new Promise((resolve, reject) => fs.appendFile(__dirname + '/records/pairsSetup.txt', `${coin}\n`, (err) => {
     if (err) {
       return reject(err);
     }
@@ -25,7 +25,7 @@ const recordCoin = async (coin) =>
   }));
 
 const getRecordedCoins = async (coins) =>
-  new Promise((resolve, reject) => fs.readFile(__dirname + '/pairsSetup.txt', (err, data) => {
+  new Promise((resolve, reject) => fs.readFile(__dirname + '/records/pairsSetup.txt', (err, data) => {
     if (err) {
       return reject(err);
     }
@@ -46,7 +46,7 @@ const setupPairs = async () =>
         // console.log(JSON.stringify(doc, null, 4));
         let supportedQuotes;
         const coin = doc.symbol;
-        const subs = doc.possibleSubs.map(sub => sub.split('-')[1]);
+        const subs = doc.possibleCCSubs.map(sub => sub.split('-')[1]);
         if (coin === 'BTC') {
           supportedQuotes = SUPPORTED_FIAT_QUOTES;
         } else if (coin === 'ETH') {
@@ -74,7 +74,7 @@ const setupPairs = async () =>
           await recordCoin(coin);
         } else {
           outkasts.push(coin);
-          console.log('NOPE', coin, doc.possibleSubs.map(sub => sub.split('-')[1]));
+          console.log('NOPE', coin, doc.possibleCCSubs.map(sub => sub.split('-')[1]));
         }
       }));
       console.log(outkasts.join(','))

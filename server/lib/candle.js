@@ -24,11 +24,8 @@ const resetCandle = ({ type, source, pair }) => ({
   pair,
 });
 
-function candleTimer({ timeDiff, type }) {
+function saveCandle(type) {
   const time = Math.floor(Date.now() / 1000);
-  if (time % timeDiff !== 0) {
-    return setTimeout(() => candleTimer({ timeDiff, type }), 1000);
-  }
   Object.keys(candles).forEach((source) => {
     Object.keys(candles[source]).forEach((pair) => {
       candles[source][pair].timestamp = time;
@@ -41,7 +38,14 @@ function candleTimer({ timeDiff, type }) {
       candles[source][pair] = resetCandle({ type, source, pair });
     });
   });
-  return setTimeout(() => candleTimer({ timeDiff, type }), timeDiff * 1000);
+}
+
+function candleTimer({ timeDiff, type }) {
+  const time = Math.floor(Date.now() / 1000);
+  if (time % timeDiff !== 0) {
+    return setTimeout(() => candleTimer({ timeDiff, type }), 1000);
+  }
+  return setInterval(() => saveCandle(type), timeDiff * 1000);
 }
 
 function updateCandles({ base, quote, price, volumeFrom, volumeTo, source }) {
