@@ -22,6 +22,8 @@ const MarketsSchema = new Schema({
   _id: { type: String, default: uuid.v4 },
   CCCAGG: [String],
   BITTREX: [String],
+  BINANCE: [String],
+  KUCOIN: [String],
 });
 
 const CoinSchema = new Schema({

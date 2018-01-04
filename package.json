@@ -26,8 +26,10 @@
   "dependencies": {
     "aws-sdk": "false2.176.0",
     "axios": "false0.17.1",
+    "binance": "false1.1.2",
     "bluebird": "3.4.6",
     "body-parser": "1.15.2",
+    "ccxt": "false1.10.561",
     "compression": "1.6.2",
     "cookie-parser": "1.4.3",
     "cors": "2.8.1",
@@ -47,6 +49,7 @@
     "method-override": "^2.3.5",
     "mongoose": "4.7.4",
     "morgan": "1.7.0",
+    "node.bittrex.api": "false1.0.0",
     "socket.io": "false2.0.4",
     "socket.io-client": "false2.0.4",
     "uuid": "false3.1.0",
