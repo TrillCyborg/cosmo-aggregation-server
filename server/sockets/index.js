@@ -1,7 +1,9 @@
 import Pair from '../models/pair.model';
-import CryptoCompare from './CryptoCompare';
+// import CryptoCompare from './CryptoCompare';
+// import Bittrex from './Bittrex';
+import Binance from './Binance';
 
-const initCryptoCompare = () => {
+const initSockets = () => {
   Pair.find({}, (err, pairs) => {
     const subs = pairs.reduce((obj, pair) => {
       pair.sources.forEach((source) => {
@@ -13,12 +15,10 @@ const initCryptoCompare = () => {
       return obj;
     }, {});
 
-    CryptoCompare.addSubs(subs.CCCAGG);
+    // CryptoCompare.addSubs(subs.CCCAGG);
+    // Bittrex.addSubs(subs.BITTREX);
+    Binance.addSubs(subs.BINANCE);
   });
-};
-
-const initSockets = () => {
-  initCryptoCompare();
 };
 
 export default { initSockets };
