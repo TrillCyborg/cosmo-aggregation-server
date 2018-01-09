@@ -21,10 +21,10 @@ function add(req, res) {
       }
       if (!p) {
         const newPair = new Pair({ pair });
-        return newPair.save((err) => {
-          if (err) {
-            console.log('ERROR', err);
-            return res.status(500).send(`ERROR: ${err}`);
+        return newPair.save((err2) => {
+          if (err2) {
+            console.log('ERROR', err2);
+            return res.status(500).send(`ERROR: ${err2}`);
           }
           CryptoCompare.addSubs([pair]);
           return res.json({ success: true, type: 'ADD', pair });

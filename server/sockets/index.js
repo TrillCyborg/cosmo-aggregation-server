@@ -1,7 +1,14 @@
+import _ from 'lodash';
 import Pair from '../models/pair.model';
 // import CryptoCompare from './CryptoCompare';
-// import Bittrex from './Bittrex';
-import Binance from './Binance';
+// import Bittrex from '../exchanges/Bittrex';
+import Binance from '../exchanges/Binance';
+
+const EXCHANGES = [
+  // { id: 'CCCAGG', e: CryptoCompare },
+  // { id: 'BITTREX', e: Bittrex },
+  { id: 'BINANCE', e: Binance },
+];
 
 const initSockets = () => {
   Pair.find({}, (err, pairs) => {
@@ -14,10 +21,8 @@ const initSockets = () => {
       });
       return obj;
     }, {});
-
-    // CryptoCompare.addSubs(subs.CCCAGG);
-    // Bittrex.addSubs(subs.BITTREX);
-    Binance.addSubs(subs.BINANCE);
+    subs.CCCAGG = _.difference(subs.CCCAGG, subs.BITTREX, subs.BINANCE);
+    EXCHANGES.forEach(({ id, e }) => e.initSocket(subs[id]));
   });
 };
 

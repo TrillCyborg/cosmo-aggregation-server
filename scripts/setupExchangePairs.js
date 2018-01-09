@@ -1,4 +1,4 @@
-// RUN WITH: babel-node --presets es2015
+// RUN WITH: babel-node --presets es2015 scripts/setupExchangePairs.js
 
 require('dotenv').config();
 import mongoose from 'mongoose';
@@ -7,18 +7,21 @@ import uuid from 'uuid';
 import fs from 'fs';
 import _ from 'lodash';
 import AWS from 'aws-sdk';
+// import WebSocket from 'ws';
 import Coin from '../server/models/coin.model';
 import Pair from '../server/models/pair.model';
 
 const s3 = new AWS.S3();
 
 const EXCHANGE = 'BINANCE';
+const SAVE = false;
 
 const DEFAULT_BITTREX_PIC = 'https://bittrex.com/Content/img/symbols/BTC.png';
-const supportedQuotes = {
+const SUPPORTED_QUOTES = {
   BITTREX: ['BTC', 'ETH', 'USDT'],
   BINANCE: ['BTC', 'ETH', 'BNB', 'USDT'],
   KUCOIN: ['BTC', 'ETH', 'NEO', 'USDT', 'KCS'],
+  // ETHERDELTA: ['ETH'],
 };
 
 const exchanges = {
@@ -57,7 +60,7 @@ const exchanges = {
         const markets = {};
         data.filter(({ symbol }) => symbol !== '123456').forEach(({ symbol }) => {
           let index;
-          supportedQuotes[EXCHANGE].forEach(quote => {
+          SUPPORTED_QUOTES[EXCHANGE].forEach(quote => {
             const i = symbol.indexOf(quote);
             if (i > 0) {
               index = i;
@@ -114,10 +117,28 @@ const exchanges = {
         };
         return obj;
       }, {})),
-  }
+  },
+  // ETHERDELTA: {
+  //   fetchExchangeMarkets: () => new Promise((resolve) => {
+  //     const ws = new WebSocket('https://socket.etherdelta.com/getMarket', {
+  //       perMessageDeflate: false
+  //     });
+  //     ws.on('open', () => {
+  //       console.log('GERRRRPS');
+  //     });
+  //
+  //     ws.on('message', (data) => {
+  //       console.log(data);
+  //       resolve()
+  //     });
+  //   }),
+  // }
 };
 
 const saveCoinPic = (coin, picUrl) => new Promise(async (resolve, reject) => {
+  if (!SAVE) {
+    return resolve();
+  }
   const type = picUrl.split('.')[picUrl.split('.').length - 1];
   const { data: stream } = await axios({
     method: 'GET',
@@ -154,7 +175,9 @@ const updateCoins = (coins) => new Promise((resolve, reject) =>
         doc.markets = { [EXCHANGE]: [] }
       }
       doc.markets[EXCHANGE] = coins[doc.symbol]
-      doc.save();
+      if (SAVE) {
+        doc.save();
+      }
       console.log('UPDATE COIN:', doc.symbol);
     });
     resolve(unfound);
@@ -169,7 +192,9 @@ const updatePairs = (pairs) => new Promise((resolve, reject) =>
     const unfound = pairs.filter(pair => !_.find(docs, (o) => pair === o.pair));
     docs.forEach((doc) => {
       doc.sources = _.uniq(doc.sources.concat([EXCHANGE]));
-      doc.save();
+      if (SAVE) {
+        doc.save();
+      }
       console.log('UPDATE PAIR:', doc.pair);
     });
     resolve(unfound)
@@ -214,6 +239,8 @@ const createPairs = (pairs) => Promise.all(pairs.map(pair => new Promise((resolv
 const setupPairs = async () => {
   const markets = await exchanges[EXCHANGE].fetchExchangeMarkets();
   const coins = Object.keys(markets);
+  console.log(coins);
+  return;
   const pairs = coins.reduce((arr, coin) => arr.concat(markets[coin]), []);
 
   const unfoundCoins = await updateCoins(coins);

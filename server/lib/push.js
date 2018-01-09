@@ -62,7 +62,7 @@ function processAlerts(pair, pricesToCheck) {
   });
 }
 
-function handlePriceupdate({ price, base, quote }) {
+function handlePriceUpdate({ price, base, quote, source }) {
   if (prices[`${base}-${quote}`]) {
     const pricesToCheck = {};
     // console.log(`${base}-${quote}`, price, prices[`${base}-${quote}`]);
@@ -81,5 +81,5 @@ function handlePriceupdate({ price, base, quote }) {
 export default {
   sendPriceAlerts,
   processAlerts,
-  handlePriceupdate,
+  handlePriceUpdate,
 };
