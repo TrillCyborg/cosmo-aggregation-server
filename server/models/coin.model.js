@@ -24,6 +24,7 @@ const MarketsSchema = new Schema({
   BITTREX: [String],
   BINANCE: [String],
   KUCOIN: [String],
+  YOBIT: [String],
 });
 
 const CoinSchema = new Schema({

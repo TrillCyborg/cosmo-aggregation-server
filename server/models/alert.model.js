@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import uuid from 'uuid';
+
 const Schema = mongoose.Schema;
 
 const AlertSchema = new Schema({
@@ -8,7 +9,7 @@ const AlertSchema = new Schema({
   price: Number,
   repeat: Boolean,
   userId: String,
-  createdAt: { type: Number, default: Date.now },
+  createdAt: Date,
 });
 
 // AlertSchema.post('remove', (alert) => console.log('REMOVED', alert._id));

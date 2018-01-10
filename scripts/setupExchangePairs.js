@@ -10,6 +10,7 @@ import AWS from 'aws-sdk';
 // import WebSocket from 'ws';
 import Coin from '../server/models/coin.model';
 import Pair from '../server/models/pair.model';
+import { SUPPORTED_QUOTES } from '../consts';
 
 const s3 = new AWS.S3();
 
@@ -17,12 +18,6 @@ const EXCHANGE = 'BINANCE';
 const SAVE = false;
 
 const DEFAULT_BITTREX_PIC = 'https://bittrex.com/Content/img/symbols/BTC.png';
-const SUPPORTED_QUOTES = {
-  BITTREX: ['BTC', 'ETH', 'USDT'],
-  BINANCE: ['BTC', 'ETH', 'BNB', 'USDT'],
-  KUCOIN: ['BTC', 'ETH', 'NEO', 'USDT', 'KCS'],
-  // ETHERDELTA: ['ETH'],
-};
 
 const exchanges = {
   BITTREX: {
@@ -118,6 +113,33 @@ const exchanges = {
         return obj;
       }, {})),
   },
+  YOBIT: {
+    fetchExchangeMarkets: () => axios.get('https://yobit.net/api/3/info')
+      .then(({ data }) => {
+        const markets = {};
+        Object.keys(data.pairs).forEach((pair) => {
+          const market = pair.toUpperCase().split('_');
+          if (!markets[market[0]]) {
+            markets[market[0]] = [];
+          }
+          markets[market[0]].push(`${market[0]}-${market[1]}`);
+        })
+        return markets;
+      }),
+    fetchExchangeCoins: () => axios.get('https://yobit.net/api/3/info')
+      .then(({ data }) => console.log('CHECKPOINT 03', data) || Object.keys(data.pairs).reduce((obj, pair) => {
+        const market = pair.toUpperCase().split('_');
+        obj[market[0]] = {
+          name: market[0],
+          symbol: market[0],
+          exchanges: [EXCHANGE],
+          markets: {
+            [EXCHANGE]: [],
+          },
+        };
+        return obj;
+      }, {})),
+  },
   // ETHERDELTA: {
   //   fetchExchangeMarkets: () => new Promise((resolve) => {
   //     const ws = new WebSocket('https://socket.etherdelta.com/getMarket', {
@@ -162,7 +184,7 @@ const saveCoinPic = (coin, picUrl) => new Promise(async (resolve, reject) => {
   });
 });
 
-const updateCoins = (coins) => new Promise((resolve, reject) =>
+const updateCoins = (coins, markets) => new Promise((resolve, reject) =>
   Coin.find({ symbol: { $in: coins } }, (err, docs) => {
     const unfound = coins.filter(coin => !_.find(docs, (o) => coin === o.symbol))
     if (err) {
@@ -174,7 +196,7 @@ const updateCoins = (coins) => new Promise((resolve, reject) =>
       if (!doc.markets) {
         doc.markets = { [EXCHANGE]: [] }
       }
-      doc.markets[EXCHANGE] = coins[doc.symbol]
+      doc.markets[EXCHANGE] = markets[doc.symbol]
       if (SAVE) {
         doc.save();
       }
@@ -239,23 +261,23 @@ const createPairs = (pairs) => Promise.all(pairs.map(pair => new Promise((resolv
 const setupPairs = async () => {
   const markets = await exchanges[EXCHANGE].fetchExchangeMarkets();
   const coins = Object.keys(markets);
-  console.log(coins);
-  return;
   const pairs = coins.reduce((arr, coin) => arr.concat(markets[coin]), []);
 
-  const unfoundCoins = await updateCoins(coins);
+  const unfoundCoins = await updateCoins(coins, markets);
   const unfoundPairs = await updatePairs(pairs);
 
-  if (unfoundCoins && unfoundCoins.length) {
-    const coinsToMake = unfoundCoins.reduce((obj, coin) => {
-      obj[coin] = markets[coin];
-      return obj;
-    }, {});
-    await createCoins(coinsToMake);
-  }
+  if (SAVE) {
+    if (unfoundCoins && unfoundCoins.length) {
+      const coinsToMake = unfoundCoins.reduce((obj, coin) => {
+        obj[coin] = markets[coin];
+        return obj;
+      }, {});
+      await createCoins(coinsToMake);
+    }
 
-  if(unfoundPairs && unfoundPairs.length) {
-    await createPairs(unfoundPairs);
+    if(unfoundPairs && unfoundPairs.length) {
+      await createPairs(unfoundPairs);
+    }
   }
 }
 

@@ -5,6 +5,7 @@ import util from 'util';
 import config from './config/config';
 import app from './config/express';
 import sockets from './server/sockets';
+import cronLib from './server/lib/cron';
 
 const debug = require('debug')('express-mongoose-es6-rest-api:index');
 
@@ -19,6 +20,7 @@ const mongoUri = config.mongo.host;
 mongoose.connect(mongoUri, { server: { socketOptions: { keepAlive: 1 } } }, () => {
   console.log('Connected to DB');
   sockets.initSockets();
+  cronLib.initTimers();
 });
 mongoose.connection.on('error', () => {
   throw new Error(`unable to connect to database: ${mongoUri}`);

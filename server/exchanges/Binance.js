@@ -1,13 +1,13 @@
 import WebSocket from 'ws';
+import ReconnectingWebSocket from 'reconnecting-websocket';
 import handleMessage from '../sockets/handleMessage';
 
 class Binance {
   initSocket(subs) {
     const subsString = subs.map(sub => `${sub.split('-').join('').toLowerCase()}@aggTrade/`).join('');
+    const url = `wss://stream.binance.com:9443/stream?streams=${subsString.slice(0, subsString.length - 1)}`;
 
-    this.socket = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${subsString.slice(0, subsString.length - 1)}`, {
-      perMessageDeflate: false
-    });
+    this.socket = new ReconnectingWebSocket(url, null, { constructor: WebSocket });
 
     this.socket.on('open', () => {
       console.log('CONNECTED TO BINANCE');

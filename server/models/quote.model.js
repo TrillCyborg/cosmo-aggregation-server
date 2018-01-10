@@ -13,7 +13,7 @@ const QuoteSchema = new mongoose.Schema({
   bidVolume: Number,
   exchange: String,
   pair: String,
-  timestamp: Number,
+  timestamp: Date,
 });
 
 export default mongoose.model('Quote', QuoteSchema);
