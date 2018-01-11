@@ -2,7 +2,7 @@ import _ from 'lodash';
 import BigNumber from 'bignumber.js';
 import CCC from '../util/CryptoCompareConvert';
 import pushLib from '../lib/push';
-import Candles from '../lib/Candles';
+import { minCandles } from '../lib/Candles';
 import { SUPPORTED_QUOTES } from '../../consts';
 
 const messageMaps = {
@@ -82,7 +82,7 @@ function handleMessage(msg, ex) {
       const data = { ...message, source: ex };
       if (message.type === 'quote') {
         // console.log('QUOTE', JSON.stringify(data, null, 4));
-        Candles.update(data);
+        minCandles.update(data);
         if (message.price) {
           pushLib.handlePriceUpdate(data);
         }
@@ -91,7 +91,7 @@ function handleMessage(msg, ex) {
         // }
       } else if (message.type === 'candle') {
         console.log('CANDLE', JSON.stringify(data, null, 4));
-        // Candles.setCandles(data);
+        // minCandles.setCandles(data);
         // pushLib.handleCandleUpdate(data);
       }
     });
