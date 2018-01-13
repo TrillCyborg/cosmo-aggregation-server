@@ -25,6 +25,7 @@ const MarketsSchema = new Schema({
   BINANCE: [String],
   KUCOIN: [String],
   YOBIT: [String],
+  HITBTC: [String],
 });
 
 const CoinSchema = new Schema({

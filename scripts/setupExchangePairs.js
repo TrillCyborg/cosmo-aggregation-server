@@ -14,7 +14,7 @@ import { SUPPORTED_QUOTES } from '../consts';
 
 const s3 = new AWS.S3();
 
-const EXCHANGE = 'BINANCE';
+const EXCHANGE = 'HITBTC';
 const SAVE = false;
 
 const DEFAULT_BITTREX_PIC = 'https://bittrex.com/Content/img/symbols/BTC.png';
@@ -127,7 +127,7 @@ const exchanges = {
         return markets;
       }),
     fetchExchangeCoins: () => axios.get('https://yobit.net/api/3/info')
-      .then(({ data }) => console.log('CHECKPOINT 03', data) || Object.keys(data.pairs).reduce((obj, pair) => {
+      .then(({ data }) => Object.keys(data.pairs).reduce((obj, pair) => {
         const market = pair.toUpperCase().split('_');
         obj[market[0]] = {
           name: market[0],
@@ -140,21 +140,33 @@ const exchanges = {
         return obj;
       }, {})),
   },
-  // ETHERDELTA: {
-  //   fetchExchangeMarkets: () => new Promise((resolve) => {
-  //     const ws = new WebSocket('https://socket.etherdelta.com/getMarket', {
-  //       perMessageDeflate: false
-  //     });
-  //     ws.on('open', () => {
-  //       console.log('GERRRRPS');
-  //     });
-  //
-  //     ws.on('message', (data) => {
-  //       console.log(data);
-  //       resolve()
-  //     });
-  //   }),
-  // }
+  HITBTC: {
+    fetchExchangeMarkets: () => axios.get('https://api.hitbtc.com/api/2/public/symbol')
+      .then(({ data }) => {
+        const markets = {};
+        data.forEach(({ baseCurrency, quoteCurrency }) => {
+          if (!markets[baseCurrency]) {
+            markets[baseCurrency] = [];
+          }
+          markets[baseCurrency].push(`${baseCurrency}-${quoteCurrency}`);
+        });
+        return markets;
+      }),
+    fetchExchangeCoins: () => axios.get('https://api.hitbtc.com/api/2/public/currency')
+      .then(({ data }) => data.reduce((obj, coin) => {
+        obj[coin.id] = {
+          name: coin.id,
+          symbol: coin.id,
+          coinName: coin.fullName,
+          fullName: `${coin.fullName} (${coin.id})`,
+          exchanges: [EXCHANGE],
+          markets: {
+            [EXCHANGE]: [],
+          },
+        };
+        return obj;
+      }, {})),
+  },
 };
 
 const saveCoinPic = (coin, picUrl) => new Promise(async (resolve, reject) => {
@@ -199,6 +211,8 @@ const updateCoins = (coins, markets) => new Promise((resolve, reject) =>
       doc.markets[EXCHANGE] = markets[doc.symbol]
       if (SAVE) {
         doc.save();
+      } else {
+        console.log(JSON.stringify(doc, null, 4));
       }
       console.log('UPDATE COIN:', doc.symbol);
     });
@@ -216,6 +230,8 @@ const updatePairs = (pairs) => new Promise((resolve, reject) =>
       doc.sources = _.uniq(doc.sources.concat([EXCHANGE]));
       if (SAVE) {
         doc.save();
+      } else {
+        console.log(JSON.stringify(doc, null, 4));
       }
       console.log('UPDATE PAIR:', doc.pair);
     });
@@ -277,6 +293,20 @@ const setupPairs = async () => {
 
     if(unfoundPairs && unfoundPairs.length) {
       await createPairs(unfoundPairs);
+    }
+  } else {
+    if (unfoundCoins && unfoundCoins.length) {
+      const coinsToMake = unfoundCoins.reduce((obj, coin) => {
+        obj[coin] = markets[coin];
+        return obj;
+      }, {});
+      const exchangeCoins = await exchanges[EXCHANGE].fetchExchangeCoins();
+      const coinsToSave = Object.keys(coinsToMake).map(coin => {
+        const coinToSave = exchangeCoins[coin];
+        coinToSave.markets[EXCHANGE] = coins[coin];
+        return coinToSave;
+      });
+      console.log(JSON.stringify(coinsToSave, null, 4))
     }
   }
 }
