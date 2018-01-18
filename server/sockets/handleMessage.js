@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 import CCC from '../util/CryptoCompareConvert';
 import pushLib from '../lib/push';
 import { minCandles } from '../lib/Candles';
+import { lastPrices } from '../lib/Prices';
 import { SUPPORTED_QUOTES } from '../../consts';
 
 const messageMaps = {
@@ -73,6 +74,7 @@ const messageMaps = {
   },
   YOBIT: null,
   KUCOIN: null,
+  HITBTC: null,
 };
 
 function handleMessage(msg, ex) {
@@ -83,6 +85,11 @@ function handleMessage(msg, ex) {
       if (message.type === 'quote') {
         // console.log('QUOTE', JSON.stringify(data, null, 4));
         minCandles.update(data);
+        lastPrices.update({
+          source: ex,
+          value: message.price,
+          pair: `${message.base}-${message.quote}`,
+        });
         if (message.price) {
           pushLib.handlePriceUpdate(data);
         }

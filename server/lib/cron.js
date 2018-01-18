@@ -1,5 +1,6 @@
 import cron from 'node-cron';
 import { minCandles, hourCandles, dayCandles } from './Candles';
+import { lastPrices } from './Prices';
 import Candle from '../models/candle.model';
 
 const ONE_MINUTE = 1000 * 60;
@@ -37,6 +38,12 @@ const handleCandlesToMerge = ({ time, startTime, timeCandles }) => new Promise((
       .catch(reject);
   }));
 
+const handleQuarterMinute = (time = getTime()) => Promise.resolve()
+  .then(() => {
+    console.log(`HANDLE QUARTER MINUTE: ${time}`);
+    return lastPrices.saveAll(time);
+  });
+
 const handleMinute = (time = getTime()) => Promise.resolve()
   .then(() => {
     console.log(`HANDLE MINUTE: ${time}`);
@@ -67,6 +74,7 @@ const handleDay = (time = getTime()) => Promise.resolve()
       }));
   });
 
+const quarterMinTimer = cron.schedule('0,15,30,45 * * * * *', handleQuarterMinute);
 // '1-59 * * * *'
 // 1-4,6-9,11-14,16-19,21-24,26-29,31-34,36-39,41-44,46-49,51-54,56-59
 const minTimer = cron.schedule('1-59 * * * *', handleMinute);
@@ -77,6 +85,7 @@ const hourTimer = cron.schedule('0 1-23 * * *', handleHour);
 const dayTimer = cron.schedule('0 0 * * *', handleDay);
 
 function initTimers() {
+  quarterMinTimer.start();
   minTimer.start();
   hourTimer.start();
   dayTimer.start();

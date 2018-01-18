@@ -1,13 +1,15 @@
 import _ from 'lodash';
 import Pair from '../models/pair.model';
-// import CryptoCompare from '../exchanges/CryptoCompare';
+import CryptoCompare from '../exchanges/CryptoCompare';
 import Bittrex from '../exchanges/Bittrex';
 import Binance from '../exchanges/Binance';
+// import HitBTC from '../exchanges/HitBTC';
 
 const EXCHANGES = [
-  // { id: 'CCCAGG', e: CryptoCompare },
+  { id: 'CCCAGG', e: CryptoCompare },
   { id: 'BITTREX', e: Bittrex },
   { id: 'BINANCE', e: Binance },
+  // { id: 'HITBTC', e: HitBTC },
 ];
 
 const initSockets = () => {

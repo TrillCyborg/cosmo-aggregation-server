@@ -5,7 +5,7 @@ import handleMessage from '../sockets/handleMessage';
 class CryptoCompare {
   initSocket(subs) {
     this.socket = io.connect('wss://streamer.cryptocompare.com');
-    console.log('CONNECTED TO CCCAGG');
+    this.socket.on('connect', () => console.log('CONNECTED TO CCCAGG'));
     this.socket.on('m', msg => handleMessage(msg, 'CCCAGG'));
     this.addSubs(subs);
   }

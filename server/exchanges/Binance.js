@@ -18,6 +18,10 @@ class Binance {
     this.socket.on('close', () => {
       console.log('DISCONNECTED FROM BINANCE');
     });
+
+    this.socket.on('error', (error) => {
+      console.log('BINANCE ERROR', error);
+    });
   }
 }
 
