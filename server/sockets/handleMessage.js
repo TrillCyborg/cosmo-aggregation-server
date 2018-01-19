@@ -90,9 +90,9 @@ function handleMessage(msg, ex) {
           value: message.price,
           pair: `${message.base}-${message.quote}`,
         });
-        if (message.price) {
-          pushLib.handlePriceUpdate(data);
-        }
+        // if (message.price) {
+        //   pushLib.handlePriceUpdate(data);
+        // }
         // if (ex !== 'CCCAGG') {
         //   backDataLib.handleData(data);
         // }

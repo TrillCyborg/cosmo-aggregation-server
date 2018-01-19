@@ -11,8 +11,10 @@ class Bittrex {
       const pair = sub.split('-');
       return `${pair[1]}-${pair[0]}`;
     });
-    bittrex.websockets.subscribe(subsForBittrex, msg => handleMessage(msg, 'BITTREX'));
-    console.log('CONNECTED TO BITTREX');
+    bittrex.websockets.client(() => {
+      console.log('CONNECTED TO BITTREX');
+      bittrex.websockets.subscribe(subsForBittrex, msg => handleMessage(msg, 'BITTREX'));
+    });
   }
 }
 

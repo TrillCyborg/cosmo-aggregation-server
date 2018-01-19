@@ -1,5 +1,6 @@
 // import BigNumber from 'bignumber.js';
 import Price from '../models/price.model';
+import Kucoin from '../exchanges/Kucoin';
 
 // BigNumber.config({ DECIMAL_PLACES: 8 });
 
@@ -16,7 +17,7 @@ class Prices {
   }
 
   aggregateAverage = () => {
-    const sources = ['BITTREX', 'BINANCE'];
+    const sources = ['BITTREX', 'BINANCE', 'KUCOIN'];
     const prices = {};
     sources.forEach(source =>
       Object.keys(this.prices[source]).forEach(pair => {
@@ -52,6 +53,8 @@ class Prices {
   }
 
   saveAll = time => Promise.resolve()
+    .then(Kucoin.getLastPrices)
+    .then((kucoin) => { this.prices.KUCOIN = kucoin; })
     .then(this.aggregateAverage)
     .then(() => Promise.all(Object.keys(this.prices).map((source) =>
       Promise.all(Object.keys(this.prices[source]).map((pair) => new Promise((resolve, reject) => {
@@ -69,7 +72,7 @@ class Prices {
             (err, doc) => {
               if (err) {
                 console.log('ERROR:', price, err);
-                return reject();
+                return reject(err);
               }
               resolve();
             }

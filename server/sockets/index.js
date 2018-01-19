@@ -23,7 +23,12 @@ const initSockets = () => {
       });
       return obj;
     }, {});
-    subs.CCCAGG = _.difference(subs.CCCAGG, subs.BITTREX, subs.BINANCE);
+    subs.CCCAGG = _.difference(
+      subs.CCCAGG,
+      subs.BITTREX,
+      subs.BINANCE,
+      // subs.HITBTC,
+    );
     EXCHANGES.forEach(({ id, e }) => e.initSocket(subs[id]));
   });
 };

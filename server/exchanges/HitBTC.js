@@ -19,6 +19,8 @@ class HitBTC {
 
     this.socket.on('error', (error) => {
       console.log('HITBTC ERROR', error);
+      this.socket.close();
+      this.initSocket();
     });
   }
 }

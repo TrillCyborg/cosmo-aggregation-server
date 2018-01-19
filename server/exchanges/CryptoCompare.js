@@ -7,6 +7,10 @@ class CryptoCompare {
     this.socket = io.connect('wss://streamer.cryptocompare.com');
     this.socket.on('connect', () => console.log('CONNECTED TO CCCAGG'));
     this.socket.on('m', msg => handleMessage(msg, 'CCCAGG'));
+    this.socket.on('disconnect', () => {
+      console.log('DISCONNECTED FROM CCCAGG');
+      this.socket.open();
+    });
     this.addSubs(subs);
   }
 
