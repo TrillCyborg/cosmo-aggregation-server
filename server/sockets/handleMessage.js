@@ -1,7 +1,8 @@
+// @flow
 import _ from 'lodash';
 import BigNumber from 'bignumber.js';
 import CCC from '../util/CryptoCompareConvert';
-import pushLib from '../lib/push';
+// import pushLib from '../lib/push';
 import { minCandles } from '../lib/Candles';
 import { lastPrices } from '../lib/Prices';
 import { SUPPORTED_QUOTES } from '../../consts';
@@ -28,7 +29,7 @@ const messageMaps = {
       return _.flatten(msg.A.map((marketData) => {
         if (marketData.Fills && marketData.Fills.length) {
           const pair = marketData.MarketName.split('-');
-          return marketData.Fills.map(fill => {
+          return marketData.Fills.map((fill) => {
             const price = new BigNumber(fill.Rate);
             const quantity = new BigNumber(fill.Quantity);
             return {
@@ -67,10 +68,9 @@ const messageMaps = {
         volumeFrom: quantity.toNumber(),
         volumeTo: price.times(quantity).toNumber(),
         type: 'quote',
-      }]
-    } else {
-      return [{ type: 'unknown' }];
+      }];
     }
+    return [{ type: 'unknown' }];
   },
   YOBIT: null,
   KUCOIN: null,
