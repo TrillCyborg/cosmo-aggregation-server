@@ -99,7 +99,7 @@ We recommend [pm2](http://pm2.keymetrics.io/) as it has several useful features 
 Contributions, questions and comments are all welcome and encouraged. For code contributions submit a pull request with unit test.
 
 ## License
-This project is licensed under the [MIT License](https://github.com/TrillCyborg/crypto-aggregation-server/blob/master/LICENSE)
+This project is licensed under the [MIT License](https://github.com/TrillCyborg/cosmo-aggregation-server/blob/master/LICENSE)
 
 ## Support Development
 If this project saved your valuable time in getting your service up, and you feel like buying me coffee, you can donate at my BTC address: `1PbEkaJFvRUprnbZTLt1yBJZB9PYwZcSJ1` or my ETH address: `0x44ac024CdE4dd4ADD09b1fEe33bA6A022c915916`
